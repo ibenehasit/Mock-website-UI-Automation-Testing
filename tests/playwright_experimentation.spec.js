@@ -41,3 +41,39 @@ test('Invalid Login Test', async({page}) => {
 })
 
 })
+
+
+/*test('Checking the footer links' , async({page}) => {
+    //made redundant by below test
+    const footerLinks = page.locator('footer a');
+    const count = await footerLinks.count();
+    for (let i = 0; i < count; i++) {
+        const link = footerLinks.nth(i);
+        const destinationUrl = await link.getAttribute('href');
+        if (destinationUrl && destinationUrl.startsWith('/')) {
+            await link.click();
+            await expect(page).toHaveURL(new RegExp(destinationUrl));
+            await page.goBack();
+        }
+    }
+})
+
+*/
+
+test.describe('Homepage Links', () => {
+    test('Checking homepage links work' , async({page}) => {
+        const headerLinks = page.locator('[data-lov-name="div"] a');
+        const count = await headerLinks.count();
+        for (let i = 0; i < count; i++) {
+            const link = headerLinks.nth(i);
+            const destinationUrl = await link.getAttribute('href');
+            if (destinationUrl && destinationUrl.startsWith('/') && destinationUrl !== '/'){ 
+                await link.click();
+                await expect(page).toHaveURL(new RegExp(destinationUrl));
+                await page.goBack();
+            } else if(destinationUrl=== '/'){
+                await expect(link).toBeVisible();
+            }
+        }
+    })    
+})
