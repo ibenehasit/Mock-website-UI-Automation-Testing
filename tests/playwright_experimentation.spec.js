@@ -10,7 +10,19 @@ test('Correct Website Title', async({page}) => {
 	await expect(page).toHaveTitle("Run Marketplace - Nigeria's Trusted Shopping Platform")
 })
 
+test('Valid Login Test', async({page}) => {
+    //logging in 
+    await page.getByRole('button', { name: 'Login' }).click();
+    await page.getByRole('textbox', { name: 'Email' }).click();
+    await page.getByRole('textbox', { name: 'Email' }).fill('customer@ekasi.com');
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill('customer123');
+    await page.getByRole('button', { name: 'Sign In' }).click();
 
+    //assurances
+    await expect(page.locator('[data-lov-name="ToastTitle"]')).toHaveText(/welcome/i);
+    await expect(page.locator('[data-lov-name="ToastDescription"]')).toHaveText(/signed in/i);
+})
 
 test('Invalid Login Test', async({page}) => {
     await page.getByRole('button', { name: 'Login' }).click();
@@ -19,6 +31,6 @@ test('Invalid Login Test', async({page}) => {
     await page.getByRole('textbox', { name: 'Password' }).click();
     await page.getByRole('textbox', { name: 'Password' }).fill('password123');
     await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.pause()
+    //Dynamic fail check, as current text is "Failed to fetch" and is likely to change
     await expect(page.getByRole('alert')).toBeVisible();
 })
