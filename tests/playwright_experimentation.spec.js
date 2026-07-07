@@ -77,3 +77,21 @@ test.describe('Homepage Links', () => {
         }
     })    
 })
+
+test.describe('Search Tests', () => {
+    test.beforeEach(async ({ page }) => {   
+        await page.getByRole('searchbox', { name: 'Search products...' }).click();
+        await page.getByRole('searchbox', { name: 'Search products...' }).fill('example query');
+        await page.getByRole('searchbox', { name: 'Search products...' }).press('Enter');
+    })
+
+    test('Failed Query test', async({page}) => {
+        await expect(page.getByRole('heading', { name: 'No products found' })).toBeVisible();
+    })
+
+    test('Search changing URL test', async({page}) => {
+        await page.pause()
+        await expect(page).toHaveURL(/.*search.*example.*query/);
+    })
+
+})
