@@ -10,6 +10,8 @@ test('Correct Website Title', async({page}) => {
 	await expect(page).toHaveTitle("Run Marketplace - Nigeria's Trusted Shopping Platform")
 })
 
+test.describe('Login Tests', () => {
+
 test('Valid Login Test', async({page}) => {
     //logging in 
     await page.getByRole('button', { name: 'Login' }).click();
@@ -22,8 +24,8 @@ test('Valid Login Test', async({page}) => {
     //assurances
     await expect.soft(page.locator('[data-lov-name="ToastTitle"]')).toHaveText(/welcome/i);
     await expect.soft(page.locator('[data-lov-name="ToastDescription"]')).toHaveText(/signed in/i);
-    await expect.soft(page.getByRole('button', { name: 'Login' })).toBeHidden()
-    await expect.soft(page.getByRole('button', { name: 'Sign Up' })).toBeHidden()
+    await expect.soft(page.getByRole('button', { name: 'Login' })).toBeHidden({ timeout: 5 });
+    await expect.soft(page.getByRole('button', { name: 'Sign Up' })).toBeHidden({ timeout: 5 });
     await expect(page).toHaveTitle("Run Marketplace - Nigeria's Trusted Shopping Platform");
 })
 
@@ -36,4 +38,6 @@ test('Invalid Login Test', async({page}) => {
     await page.getByRole('button', { name: 'Sign In' }).click();
     //Dynamic fail check, as current text is "Failed to fetch" and is likely to change
     await expect(page.getByRole('alert')).toBeVisible();
+})
+
 })
