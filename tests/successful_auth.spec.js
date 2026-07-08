@@ -42,7 +42,6 @@ test('Invalid Login Test', async({page}) => {
 
 })
 
-
 /*test('Checking the footer links' , async({page}) => {
     //made redundant by below test
     const footerLinks = page.locator('footer a');
@@ -90,8 +89,8 @@ test.describe('Search Tests', () => {
     })
 
     test('Search changing URL test', async({page}) => {
-        await page.pause()
         await expect(page).toHaveURL(/.*search.*example.*query/);
     })
 
 })
+
