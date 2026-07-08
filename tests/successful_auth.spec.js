@@ -12,8 +12,9 @@ test('Correct Website Title', async({page}) => {
 
 test.describe('Login Tests', () => {
 
-test('Valid Login Test', async({page}) => {
+test('Desktop Valid Login Test', async({page}, testInfo) => {
     //logging in 
+    test.skip(testInfo.project.name.includes('Mobile'), 'This test is for desktop only');
     await page.getByRole('button', { name: 'Login' }).click();
     await page.getByRole('textbox', { name: 'Email' }).click();
     await page.getByRole('textbox', { name: 'Email' }).fill('customer@ekasi.com');
@@ -21,7 +22,27 @@ test('Valid Login Test', async({page}) => {
     await page.getByRole('textbox', { name: 'Password' }).fill('customer123');
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    //assurances
+    //assurancesz
+    await expect.soft(page.locator('[data-lov-name="ToastTitle"]')).toHaveText(/welcome/i);
+    await expect.soft(page.locator('[data-lov-name="ToastDescription"]')).toHaveText(/signed in/i);
+    await expect.soft(page.getByRole('button', { name: 'Login' })).toBeHidden({ timeout: 5 });
+    await expect.soft(page.getByRole('button', { name: 'Sign Up' })).toBeHidden({ timeout: 5 });
+    await expect(page).toHaveTitle("Run Marketplace - Nigeria's Trusted Shopping Platform");
+})
+
+test.only('Mobile Valid Login Test', async({page}, testInfo) => {
+    //logging in 
+    test.skip(!testInfo.project.name.includes('Mobile'), 'This test is for mobile only');
+    await page.pause()
+    await page.getByRole('button').filter({ hasText: /^$/ }).click();
+    await page.getByRole('button', { name: 'Login' }).click();
+    await page.getByRole('textbox', { name: 'Email' }).click();
+    await page.getByRole('textbox', { name: 'Email' }).fill('customer@ekasi.com');
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill('customer123');
+    await page.getByRole('button', { name: 'Sign In' }).click();
+
+    //assurancesz
     await expect.soft(page.locator('[data-lov-name="ToastTitle"]')).toHaveText(/welcome/i);
     await expect.soft(page.locator('[data-lov-name="ToastDescription"]')).toHaveText(/signed in/i);
     await expect.soft(page.getByRole('button', { name: 'Login' })).toBeHidden({ timeout: 5 });
