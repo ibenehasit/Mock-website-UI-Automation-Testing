@@ -12,7 +12,7 @@ test('Correct Website Title', async({page}) => {
 
 test.describe('Login Tests', () => {
 
-test('Desktop Valid Login Test', async({page}, testInfo) => {
+test('Desktop Valid Login Test @desktop', async({page}, testInfo) => {
     //logging in 
     test.skip(testInfo.project.name.includes('Mobile'), 'This test is for desktop only');
     await page.getByRole('button', { name: 'Login' }).click();
@@ -30,10 +30,9 @@ test('Desktop Valid Login Test', async({page}, testInfo) => {
     await expect(page).toHaveTitle("Run Marketplace - Nigeria's Trusted Shopping Platform");
 })
 
-test.only('Mobile Valid Login Test', async({page}, testInfo) => {
+test('Mobile Valid Login Test @mobile', async({page}, testInfo) => {
     //logging in 
     test.skip(!testInfo.project.name.includes('Mobile'), 'This test is for mobile only');
-    await page.pause()
     await page.getByRole('button').filter({ hasText: /^$/ }).click();
     await page.getByRole('button', { name: 'Login' }).click();
     await page.getByRole('textbox', { name: 'Email' }).click();
@@ -42,7 +41,7 @@ test.only('Mobile Valid Login Test', async({page}, testInfo) => {
     await page.getByRole('textbox', { name: 'Password' }).fill('customer123');
     await page.getByRole('button', { name: 'Sign In' }).click();
 
-    //assurancesz
+    //assurances
     await expect.soft(page.locator('[data-lov-name="ToastTitle"]')).toHaveText(/welcome/i);
     await expect.soft(page.locator('[data-lov-name="ToastDescription"]')).toHaveText(/signed in/i);
     await expect.soft(page.getByRole('button', { name: 'Login' })).toBeHidden({ timeout: 5 });
@@ -50,7 +49,8 @@ test.only('Mobile Valid Login Test', async({page}, testInfo) => {
     await expect(page).toHaveTitle("Run Marketplace - Nigeria's Trusted Shopping Platform");
 })
 
-test('Invalid Login Test', async({page}) => {
+test('Desktop Invalid Login Test @desktop', async({page}, testInfo) => {
+    test.skip(testInfo.project.name.includes('Mobile'), 'This test is for desktop only');
     await page.getByRole('button', { name: 'Login' }).click();
     await page.getByRole('textbox', { name: 'Email' }).click();
     await page.getByRole('textbox', { name: 'Email' }).fill('username@email.com');
@@ -59,6 +59,20 @@ test('Invalid Login Test', async({page}) => {
     await page.getByRole('button', { name: 'Sign In' }).click();
     //Dynamic fail check, as current text is "Failed to fetch" and is likely to change
     await expect(page.getByRole('alert')).toBeVisible();
+})
+
+test('Mobile Invalid Login Test @mobile', async({page}, testInfo) => {
+    test.skip(!testInfo.project.name.includes('Mobile'), 'This test is for mobile only');
+    await page.getByRole('button').filter({ hasText: /^$/ }).click();
+    await page.getByRole('button', { name: 'Login' }).click();
+    await page.getByRole('textbox', { name: 'Email' }).click();
+    await page.getByRole('textbox', { name: 'Email' }).fill('username@email.com');
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill('password123');
+    await page.getByRole('button', { name: 'Sign In' }).click();
+    //Dynamic fail check, as current text is "Failed to fetch" and is likely to change
+    await expect(page.getByRole('alert')).toBeVisible()
+
 })
 
 })
