@@ -112,20 +112,39 @@ test.describe('Homepage Links', () => {
     })    
 })
 
-test.describe('Search Tests', () => {
-    test.beforeEach(async ({ page }) => {   
+test.describe('Desktop Search Tests', () => {
+    test.beforeEach(async ({ page }, testInfo) => {
+        test.skip(testInfo.project.name.includes('Mobile'), 'This test is for desktop only');   
         await page.getByRole('searchbox', { name: 'Search products...' }).click();
         await page.getByRole('searchbox', { name: 'Search products...' }).fill('example query');
         await page.getByRole('searchbox', { name: 'Search products...' }).press('Enter');
     })
 
-    test('Failed Query test', async({page}) => {
+    test('Failed Query test @desktop', async({page}) => {
         await expect(page.getByRole('heading', { name: 'No products found' })).toBeVisible();
     })
 
-    test('Search changing URL test', async({page}) => {
+    test('Search changing URL test @desktop', async({page}) => {
         await expect(page).toHaveURL(/.*search.*example.*query/);
     })
 
 })
 
+test.describe('Mobile Search Tests', () => {
+    test.beforeEach(async ({ page }, testInfo) => {
+        test.skip(!testInfo.project.name.includes('Mobile'), 'This test is for mobile only');
+        await page.getByRole('button').filter({ hasText: /^$/ }).click();
+        await page.getByRole('searchbox', { name: 'Search products...' }).click();
+        await page.getByRole('searchbox', { name: 'Search products...' }).fill('example query');
+        await page.getByRole('searchbox', { name: 'Search products...' }).press('Enter');
+    })
+
+    test('Failed Query test @mobile', async({page}) => {
+        await expect(page.getByRole('heading', { name: 'No products found' })).toBeVisible();
+    })
+
+    test('Search changing URL test @mobile', async({page}) => {
+        await expect(page).toHaveURL(/.*search.*example.*query/);
+    })
+
+})
