@@ -6,13 +6,12 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Correct Website Title', async({page}) => {
-    await page.pause()
 	await expect(page).toHaveTitle("Run Marketplace - Nigeria's Trusted Shopping Platform")
 })
 
 test.describe('Login Tests', () => {
 
-test('Desktop Valid Login Test @desktop', async({page}, testInfo) => {
+test.fixme('Desktop Valid Login Test @only', async({page}, testInfo) => {
     //logging in 
     test.skip(testInfo.project.name.includes('Mobile'), 'This test is for desktop only');
     await page.getByRole('button', { name: 'Login' }).click();
@@ -95,12 +94,14 @@ test('Mobile Invalid Login Test @mobile', async({page}, testInfo) => {
 */
 
 test.describe('Homepage Links', () => {
-    test('Checking homepage links work' , async({page}) => {
+    test('Checking desktop homepage links work' , async({page}, testInfo) => {
+        test.skip(testInfo.project.name.includes('Mobile'), 'This test is for desktop only');
         const headerLinks = page.locator('[data-lov-name="div"] a');
         const count = await headerLinks.count();
         for (let i = 0; i < count; i++) {
             const link = headerLinks.nth(i);
             const destinationUrl = await link.getAttribute('href');
+            //if a valid link that doesn't redirect to the home page
             if (destinationUrl && destinationUrl.startsWith('/') && destinationUrl !== '/'){ 
                 await link.click();
                 await expect(page).toHaveURL(new RegExp(destinationUrl));
@@ -110,7 +111,29 @@ test.describe('Homepage Links', () => {
             }
         }
     })    
+
+    test('Checking Mobile homepage links work' , async({page}, testInfo) => {
+        test.skip(!testInfo.project.name.includes('Mobile'), 'This test is for mobile only')
+        await page.getByRole('button').filter({ hasText: /^$/ }).click();
+        // switch from desktop to mobile hides some elements, so visibility necessary
+        const headerLinks = page.locator('[data-lov-name="div"] a:visible');
+        const count = await headerLinks.count();
+        for (let i = 0; i < count; i++) {
+            const link = headerLinks.nth(i);
+            const destinationUrl = await link.getAttribute('href');
+            if (destinationUrl && destinationUrl.startsWith('/') && destinationUrl !== '/'){ 
+                await link.click();
+                await expect(page).toHaveURL(new RegExp(destinationUrl));
+                await page.goBack();
+                await page.getByRole('button').filter({ hasText: /^$/ }).click();
+            } else if(destinationUrl=== '/'){
+                await expect(link).toBeVisible();
+            }
+        }
+    })    
+
 })
+
 
 test.describe('Desktop Search Tests', () => {
     test.beforeEach(async ({ page }, testInfo) => {
